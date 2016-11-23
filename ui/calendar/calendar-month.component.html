@@ -1,1 +1,15 @@
 <h1>{{now.format('MMMM YYYY')}}</h1>
+<table width=100% style="border: 1px black solid; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <td *ngFor='let dayName of weekdays' width=14% style="border: 1px black solid;">{{dayName}}</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor='let week of weeks; let row = index;'>
+            <td *ngFor='let dayName of weekdays; let column = index;' style="border: 1px black solid;">
+                <div>{{momentForIndex(row, column).date()}}</div>
+            </td>
+        </tr>
+    </tbody>
+</table>
