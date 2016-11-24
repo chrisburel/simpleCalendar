@@ -1,4 +1,6 @@
-<h1>{{now.format('MMMM YYYY')}}</h1>
+<h1 style="display: inline;">{{now.format('MMMM YYYY')}}</h1>
+<button (click)="setToNextMonth()" style="float: right;">Next</button>
+<button (click)="setToPreviousMonth()" style="float: right;">Previous</button>
 <table width=100% style="border: 1px black solid; border-collapse: collapse;">
     <thead>
         <tr>

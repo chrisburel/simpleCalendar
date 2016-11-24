@@ -43,6 +43,20 @@ export class CalendarMonthComponent implements OnInit {
         );
     }
 
+    setCurrentDate(newNow) {
+        this.now = newNow;
+        this._calculateNumWeeks();
+        this.dayOffset = this.currentDate().startOf('month').day();
+    }
+
+    setToPreviousMonth() {
+        this.setCurrentDate(this.currentDate().subtract(1, 'months'));
+    }
+
+    setToNextMonth() {
+        this.setCurrentDate(this.currentDate().add(1, 'months'));
+    }
+
     _calculateNumWeeks() {
         // Determine how many weeks to display for this month
         let first = this.currentDate().startOf('month').week();
