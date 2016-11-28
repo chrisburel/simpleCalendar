@@ -1,7 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewContainerRef, ComponentFactoryResolver } from '@angular/core';
 import moment = require('moment');
 
 import { EventService } from './event.service';
+import { CreateEventComponent } from './create-event.component';
 
 @Component({
     selector: 'calendar-month',
@@ -27,9 +28,14 @@ export class CalendarMonthComponent implements OnInit {
 
     events: Map<string, [Event]> = new Map<string, [Event]>();
 
+    createEventComponent: ViewContainerRef;
+
     constructor(
+      private viewContainerRef: ViewContainerRef,
+      private componentFactoryResolver: ComponentFactoryResolver,
       private eventService: EventService,
     ) {
+        this.createEventComponentFactory = this.componentFactoryResolver.resolveComponentFactory(CreateEventComponent);
     }
 
     ngOnInit() {
@@ -85,6 +91,28 @@ export class CalendarMonthComponent implements OnInit {
         this.setCurrentDate(this.currentDate().add(1, 'months'));
     }
 
+    showCreateNewEvent(date, event) {
+        // Open a dialog to enter details for a new event on `date`.
+        event.preventDefault();
+        if (!this.createEventComponent) {
+            this.createEventComponent = this.viewContainerRef.createComponent(this.createEventComponentFactory);
+        }
+
+        // Initialize the component's properties
+        this.createEventComponent.instance.setStartDate(date);
+        this.createEventComponent.instance.x = event.clientX;
+        this.createEventComponent.instance.y = event.clientY;
+
+        // Destroy the createEventComponent when the accepted or rejected event
+        // is emitted
+        this.createEventComponent.instance.accepted.subscribe(
+            next => { this._destroyCreateEventComponent() }
+        );
+        this.createEventComponent.instance.rejected.subscribe(
+            next => { this._destroyCreateEventComponent() }
+        );
+    }
+
     _calculateNumWeeks() {
         // Determine how many weeks to display for this month
         let first = this.currentDate().startOf('month').week();
@@ -97,5 +125,12 @@ export class CalendarMonthComponent implements OnInit {
         // Make an array of numbers that the html template uses to know how
         // many rows to include in this month's calendar table
         this.weeks = Array(numWeeksToDisplay).fill().map((x,i)=>i);
+    }
+
+    _destroyCreateEventComponent() {
+        if (this.createEventComponent) {
+            this.createEventComponent.destroy();
+            this.createEventComponent = undefined;
+        }
     }
 }
