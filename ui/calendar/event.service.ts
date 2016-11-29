@@ -1,5 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { Http } from '@angular/http';
+import { Http, Headers, RequestOptions } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import moment = require('moment');
 
@@ -23,8 +23,16 @@ export class EventService {
     }
 
     createEvent(event:Event) {
-        this._eventCache.set(event.id, event);
-        this.eventCreated.emit(event);
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+        let options = new RequestOptions({ headers: headers });
+
+        this.http.post(this._eventDbUrl + '/events', {'events': [event]}, options)
+            .catch(this.handleError)
+            .subscribe(res => {
+                event.id = JSON.parse(res.json())[0];
+                this._eventCache.set(event.id, event);
+                this.eventCreated.emit(event);
+            })
     }
 
     private extractData(self, res: Response) {
