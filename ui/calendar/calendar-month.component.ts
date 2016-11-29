@@ -106,7 +106,11 @@ export class CalendarMonthComponent implements OnInit {
         // Destroy the createEventComponent when the accepted or rejected event
         // is emitted
         this.createEventComponent.instance.accepted.subscribe(
-            next => { this._destroyCreateEventComponent() }
+            next => {
+                // Post the event from the dialog to the server
+                this.eventService.createEvent(this.createEventComponent.instance.event);
+                this._destroyCreateEventComponent();
+            }
         );
         this.createEventComponent.instance.rejected.subscribe(
             next => { this._destroyCreateEventComponent() }

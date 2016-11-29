@@ -10,4 +10,8 @@ export class EventService {
     getEvents(): Promise<Event[]> {
         return Promise.resolve(this.events);
     }
+
+    createEvent(event:Event) {
+        this.events.push(event);
+    }
 }
