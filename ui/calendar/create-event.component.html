@@ -1,0 +1,12 @@
+<div style="position: absolute; background: white; border: 1px black solid;" [style.left.px]="x" [style.top.px]="y">
+    <h2>Create event</h2>
+
+    <div>
+        Description:
+        <input type="text" class="form-control" id="description"
+            [(ngModel)]="event.description" name="description" required>
+    </div>
+
+    <button style="float: right" (click)="accept()">Create</button>
+    <button style="float: right" (click)="reject()">Cancel</button>
+</div>
