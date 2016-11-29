@@ -1,0 +1,20 @@
+<h1 style="display: inline;">{{now.format('MMMM YYYY')}}</h1>
+<button (click)="setToNextMonth()" style="float: right;">Next</button>
+<button (click)="setToPreviousMonth()" style="float: right;">Previous</button>
+<table width=100% style="border: 1px black solid; border-collapse: collapse;">
+    <thead>
+        <tr>
+            <td *ngFor='let dayName of weekdays' width=14% style="border: 1px black solid;">{{dayName}}</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr height=100px *ngFor='let week of weeks; let row = index;'>
+            <td *ngFor='let dayName of weekdays; let column = index;' style="border: 1px black solid; vertical-align: top;" (click)="showCreateNewEvent(momentForIndex(row, column), $event)">
+                <div>{{momentForIndex(row, column).date()}}</div>
+                <div style='background: red' *ngFor='let event of eventsForIndex(row, column);'>
+                    {{event.description}}
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
