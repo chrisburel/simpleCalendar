@@ -11,5 +11,6 @@ from calendardb.resources import EventListResource
 api.add_resource(EventListResource, '/api/v1.0/events', endpoint='events')
 
 if __name__ == '__main__':
+    from calendardb.session import initialize
+    initialize()
     app.run(host='0.0.0.0', debug=True, threaded=True)
-
