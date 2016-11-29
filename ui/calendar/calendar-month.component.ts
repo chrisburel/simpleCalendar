@@ -1,9 +1,12 @@
 import { Component, Input, OnInit } from '@angular/core';
 import moment = require('moment');
 
+import { EventService } from './event.service';
+
 @Component({
     selector: 'calendar-month',
     templateUrl: 'calendar/calendar-month.component.html',
+    providers: [EventService],
 })
 export class CalendarMonthComponent implements OnInit {
     @Input()
@@ -22,16 +25,41 @@ export class CalendarMonthComponent implements OnInit {
     // Tuesday, dayOffset will equal 2 (where Sunday is 0)
     dayOffset: number;
 
+    events: Map<string, [Event]> = new Map<string, [Event]>();
+
+    constructor(
+      private eventService: EventService,
+    ) {
+    }
+
     ngOnInit() {
         this._calculateNumWeeks();
 
         this.dayOffset = this.currentDate().startOf('month').day();
+
+        this.eventService.getEvents().then(events => {
+            this.events.clear();
+            for (let event of events) {
+                let dateHash = moment(event.startDate).format("YMMDD");
+                let eventsForDate = this.events.get(dateHash);
+                if (!eventsForDate) {
+                    eventsForDate = [];
+                    this.events.set(dateHash, eventsForDate);
+                }
+                eventsForDate.push(event);
+            }
+        });
     }
 
     currentDate() {
         // All operations on a moment.js object mutate the object.  We don't
         // want `now` changing arbitrarly, so always operate on a copy.
         return moment(this.now);
+    }
+
+    eventsForIndex(row:number, column:number) {
+        let date = this.momentForIndex(row, column);
+        return this.events.get(date.format("YMMDD"));
     }
 
     momentForIndex(row:number, column:number) {

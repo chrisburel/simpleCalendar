@@ -11,6 +11,9 @@
         <tr height=100px *ngFor='let week of weeks; let row = index;'>
             <td *ngFor='let dayName of weekdays; let column = index;' style="border: 1px black solid; vertical-align: top;">
                 <div>{{momentForIndex(row, column).date()}}</div>
+                <div style='background: red' *ngFor='let event of eventsForIndex(row, column);'>
+                    {{event.description}}
+                </div>
             </td>
         </tr>
     </tbody>
