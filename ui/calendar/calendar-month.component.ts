@@ -36,6 +36,7 @@ export class CalendarMonthComponent implements OnInit {
       private eventService: EventService,
     ) {
         this.createEventComponentFactory = this.componentFactoryResolver.resolveComponentFactory(CreateEventComponent);
+        this.eventService.eventCreated.subscribe({next: event => this.onEventCreated(event)});
     }
 
     ngOnInit() {
@@ -46,13 +47,7 @@ export class CalendarMonthComponent implements OnInit {
         this.eventService.getEvents().then(events => {
             this.events.clear();
             for (let event of events) {
-                let dateHash = moment(event.startDate).format("YMMDD");
-                let eventsForDate = this.events.get(dateHash);
-                if (!eventsForDate) {
-                    eventsForDate = [];
-                    this.events.set(dateHash, eventsForDate);
-                }
-                eventsForDate.push(event);
+                this.onEventCreated(event);
             }
         });
     }
@@ -75,6 +70,16 @@ export class CalendarMonthComponent implements OnInit {
             (row * this.weekdays.length) + column - this.dayOffset,
             'days'
         );
+    }
+
+    onEventCreated(event:Event) {
+        let dateHash = moment(event.startDate).format("YMMDD");
+        let eventsForDate = this.events.get(dateHash);
+        if (!eventsForDate) {
+            eventsForDate = [];
+            this.events.set(dateHash, eventsForDate);
+        }
+        eventsForDate.push(event);
     }
 
     setCurrentDate(newNow) {
