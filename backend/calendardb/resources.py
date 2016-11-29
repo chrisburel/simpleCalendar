@@ -1,8 +1,9 @@
 import datetime
+import dateutil.parser
 import json
 import pytz
 
-from flask.ext.restful import Resource
+from flask.ext.restful import Resource, reqparse
 
 from calendardb.session import Session
 from calendardb.schema import Event
@@ -35,3 +36,28 @@ class EventListResource(Resource):
         eventData = [[getattr(e, field) for field in fieldNames] for e in events]
 
         return json.dumps((fieldNames, eventData), cls=DateTimeJSONEncoder)
+
+    def post(self):
+        parser = reqparse.RequestParser()
+        parser.add_argument(
+            'events',
+            type=list,
+            location='json',
+            required=True,
+        )
+
+        args = parser.parse_args()
+
+        session = Session()
+        createdEvents = []
+        for eventData in args.events:
+            event = Event()
+            for (field, value) in eventData.iteritems():
+                if (field in ('startDate, endDate')):
+                    value = dateutil.parser.parse(value)
+                setattr(event, field, value)
+            session.add(event)
+            createdEvents.append(event)
+        session.commit()
+
+        return json.dumps([event.id for event in createdEvents])
