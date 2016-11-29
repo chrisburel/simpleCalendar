@@ -44,12 +44,9 @@ export class CalendarMonthComponent implements OnInit {
 
         this.dayOffset = this.currentDate().startOf('month').day();
 
-        this.eventService.getEvents().then(events => {
-            this.events.clear();
-            for (let event of events) {
-                this.onEventCreated(event);
-            }
-        });
+        this.eventService.getEvents().subscribe(
+            events => events.map(event => this.onEventCreated(event)),
+        );
     }
 
     currentDate() {

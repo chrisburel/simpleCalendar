@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import './rxjs-operators';
 import moment = require('moment');
 
 import {CalendarMonthComponent} from './calendar-month.component';
